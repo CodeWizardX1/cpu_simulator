@@ -41,33 +41,30 @@ class CPU:
         match opcode:
             case 'ADD':
                 self.registers[operands[0]] = self.registers[operands[1]] + self.registers[operands[2]]
-                return self.registers[operands[0]]
+                return f'The result is: {self.registers[operands[0]]}'
             case 'ADDI':
                 self.registers[operands[0]] = self.registers[operands[1]] + operands[2]
-                return self.registers[operands[0]]
+                return f'The result is: {self.registers[operands[0]]}'
             case 'SUB':
-                self.registers[operands[0]] = self.registers[operands[2]] - self.registers[operands[1]]
-                return self.registers[operands[0]]
+                self.registers[operands[0]] = self.registers[operands[1]] - self.registers[operands[2]]
+                return f'The result is: {self.registers[operands[0]]}'
             case 'MUL':
                 self.registers[operands[0]] = self.registers[operands[1]] * self.registers[operands[2]]
-                return self.registers[operands[0]]
+                return f'The result is: {self.registers[operands[0]]}'
             case 'DIV':
-                calculated_value = 0
                 if self.registers[operands[2]] != 0:
-                    calculated_value = self.registers[operands[1]] / self.registers[operands[2]]
+                    self.registers[operands[0]] = self.registers[operands[1]] / self.registers[operands[2]]
                 else:
-                    print(f'Division by 0 error: {self.registers[operands[1]]} / {self.registers[operands[2]]}')
-                return calculated_value
-            case 'HALT':
-                self.is_halted = True
+                    return f'Division by 0 error: {self.registers[operands[1]]} / {self.registers[operands[2]]}'
+                return f'The result is: {self.registers[operands[0]]}'
             case _:
                 print('Invalid opcode')
 
     def main(self, instruction, value_1=None, value_2=None):
-        if value_1:
+        if value_1 is not None:
             self.store_value_in_register(value_1)
 
-        if value_2:
+        if value_2 is not None:
             self.store_value_in_register(value_2)
 
         self.store_instruction_in_memory(instruction)
@@ -76,16 +73,26 @@ class CPU:
 
         opcode, operands = self.decode(instruction_register)
 
-        print(f'The result is: {self.execute(opcode,operands)}')
+        print(self.execute(opcode,operands))
 
 
 if __name__ == "__main__":
-    CPU().main("MUL,R3,R2,R1", 5, 6)
-
-        
-        
-        
+    new_cpu = CPU()
     
-   
+    print('ADDITION')
+    new_cpu.main("ADD,R11,R1,R2", 10, 20)
     
+    print('SUBTRACTION')
+    new_cpu.main("SUB,R8,R3,R4", 5, 10)
     
+    print('MULTIPLICATION')
+    new_cpu.main("MUL,R13,R5,R6", 3, 4)
+    
+    print('ADDITION WITH IMMEDIATE VALUE OF 7') 
+    new_cpu.main("ADDI,R20,R7,7", 5)
+    
+    print('DIVISION')
+    new_cpu.main('DIV,R16,R8,R9', 30, 2)
+    
+    print('DIVISION BY 0')
+    new_cpu.main("DIV,R21,R10,R11", 3, 0)
